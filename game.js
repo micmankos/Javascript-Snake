@@ -36,7 +36,7 @@ var Snake = function() {
   this.head_y = 0;
   // var posArray = [new Pos(3,3)];
   this.posArray = [new Pos(3,3)];
-  this.direction;
+  this.direction = "right";
   // this.posArray[0] = new Pos(3,3);
   //var posArray;
 };
@@ -52,9 +52,26 @@ Snake.prototype.moveSnake = function(){
   //every snake square at pos i+1 becomes the snake square at pos i
 
   //if this.direction == right
-  var newX = this.posArray[0].x + 1;
-  var newY = this.posArray[0].y;
+  var newX;
+  var newY;
 
+
+  if(this.direction==="up"){
+    newX = this.posArray[0].x;
+    newY = this.posArray[0].y - 1;
+  }
+  else if(this.direction==="down"){
+    newX = this.posArray[0].x;
+    newY = this.posArray[0].y + 1;
+  }
+  else if(this.direction==="left"){
+    newX = this.posArray[0].x - 1;
+    newY = this.posArray[0].y;
+  }
+  else if(this.direction==="right"){
+    newX = this.posArray[0].x + 1;
+    newY = this.posArray[0].y;
+  }
 
   //temporary game over logic
   if(newX == 49){
@@ -109,20 +126,20 @@ $(document).ready(function(){
 
     //changes direction of snake!
     if(e.keyCode == 38){ //up
-      //shift every
-      console.log("up");
+      gameSnake.direction="up";
+      console.log(gameSnake.direction);
     }
     else if(e.keyCode == 40){ //down
-      // gameSnake.updatePos(gameSnake.head_x, gameSnake.head_y-1);
-      console.log("down");
+      gameSnake.direction="down";
+      console.log(gameSnake.direction);
     }
     else if(e.keyCode == 37){ //left
-      // gameSnake.updatePos(gameSnake.head_x-1, gameSnake.head_y);
-      console.log("left");
+      gameSnake.direction="left";
+      console.log(gameSnake.direction);
     }
     else if(e.keyCode == 39){ //right
-      // gameSnake.updatePos(gameSnake.head_x+1, gameSnake.head_y);
-      console.log("right");
+      gameSnake.direction="right";
+      console.log(gameSnake.direction);
     }
   });
 });
