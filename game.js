@@ -45,7 +45,24 @@ Snake.prototype.addPos = function(x, y){
   this.posArray.push(new Pos(x,y));
 }
 
-Snake.prototype.moveSnake = function(){
+Snake.prototype.didCollide = function(wallX, wallY){
+  //if the coordinates of the head of the snake is the same as
+  //any part of the snake array minus posArray[0] or if it
+  //ran into the wall, return true
+  var headX = this.posArray[0].x;
+  var headY = this.posArray[0].y;
+  for(var i = 1; i < this.posArray.length - 1; i++){
+    if(headX == posArray[i].x && headY == posArray[i].y)
+      return true;
+  }
+
+  if(headX == wallX-1 || headX == 0 || headY == wallY-1 || headY == 0)
+    return true;
+
+  return false;
+}
+
+Snake.prototype.moveSnake = function(wallX, wallY){
   //take the direction
 
   //take the next right direction and update all the positions in snake array so that they
@@ -74,7 +91,7 @@ Snake.prototype.moveSnake = function(){
   }
 
   //temporary game over logic
-  if(newX == 49){
+  if(this.didCollide(wallX,wallY)){
     alert("You lost!");
     clearInterval(interval);
   }
@@ -118,7 +135,7 @@ $(document).ready(function(){
   gameSnake.drawSnake();
   /*==========================Game Logic===========================*/
 
-  interval = setInterval(function(){gameSnake.moveSnake()}, 65);
+  interval = setInterval(function(){gameSnake.moveSnake(x, y)}, 65);
   //alert("Continuing...");
 
   /*==========================Handlers===========================*/
