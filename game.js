@@ -30,6 +30,20 @@ Grid.prototype.drawGrid = function(x, y){
     }
   }
 };
+  /*==========================Apple Object===========================*/
+var Apple = function() {
+  this.x = 0;
+  this.y = 0;
+  this.exists = false;
+}
+
+Apple.prototype.createApple = function(){
+  //assign an x,y to apple, while that x,y overlaps with a snake or wall, then generate it again
+  //when an apple is generated, changes this.exists to true
+
+
+}
+
   /*==========================Snake Object===========================*/
 var Snake = function() {
   this.head_x = 0;
@@ -46,9 +60,6 @@ Snake.prototype.addPos = function(x, y){
 }
 
 Snake.prototype.didCollide = function(wallX, wallY){
-  //if the coordinates of the head of the snake is the same as
-  //any part of the snake array minus posArray[0] or if it
-  //ran into the wall, return true
   var headX = this.posArray[0].x;
   var headY = this.posArray[0].y;
   for(var i = 1; i < this.posArray.length - 1; i++){
@@ -62,16 +73,11 @@ Snake.prototype.didCollide = function(wallX, wallY){
   return false;
 }
 
+//give moveSnake an "apple count" which, when a snake eats an apple, appleCount will become 3. Each time moveSnake is called, appleCount reduces by 1
+//When appleCount > 0, the current move the snake makes will be added on to the total length of the snake
 Snake.prototype.moveSnake = function(wallX, wallY){
-  //take the direction
-
-  //take the next right direction and update all the positions in snake array so that they
-  //every snake square at pos i+1 becomes the snake square at pos i
-
-  //if this.direction == right
   var newX;
   var newY;
-
 
   if(this.direction==="up"){
     newX = this.posArray[0].x;
@@ -90,15 +96,23 @@ Snake.prototype.moveSnake = function(wallX, wallY){
     newY = this.posArray[0].y;
   }
 
-  //temporary game over logic
+  var tail = this.posArray.length;
+  var tailX = this.posArray[tail-1].x;
+  var tailY = this.posArray[tail-1].y;
+  $('#x' + tailX + "y" + tailY).removeClass('worm-block');
+  // $('#x' + tailX + "y" + tailY).addClass('wall-block');
+
+  this.posArray[0].x = newX;
+  this.posArray[0].y = newY;
+
+  console.log(this.posArray);
+
+  //game over logic
   if(this.didCollide(wallX,wallY)){
     alert("You lost!");
     clearInterval(interval);
   }
 
-  this.posArray[0].x = newX;
-  this.posArray[0].y = newY;
-  console.log(this.posArray);
   this.drawSnake();
 
 }
@@ -118,6 +132,9 @@ Snake.prototype.drawSnake = function() {
     x = this.posArray[i].x;
     y = this.posArray[i].y;
     $('#x' + x + "y" + y).addClass('worm-block');
+    // if(i==posArray.length){
+    //   $('#x' + x + "y" + y).removeClass('worm-block');
+    // }
   }
 };
 
