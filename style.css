@@ -1,0 +1,12 @@
+.square{
+  border-color: black;
+  border-width: 1px;
+  border-style: solid;
+  float: left;
+}
+#grid{
+
+}
+.worm-block{
+  background-color: lightgreen;
+}
