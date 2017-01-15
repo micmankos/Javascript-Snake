@@ -8,11 +8,14 @@
 
 }
 .worm-block{
-  background-color: lightgreen;
+  background-color: #00cc11;
 }
 .wall-block{
   background-color: black;
 }
 .apple-block{
   background-color: red;
+}
+.gameOver-block{
+  background-color: #f4eb42 !important;
 }

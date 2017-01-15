@@ -44,11 +44,11 @@ Apple.prototype.makeApple = function(wallX, wallY){
   var validLoc = false;
 
   while(validLoc == false){
-    var x = Math.floor((Math.random() * wallX)+1);
-    var y = Math.floor((Math.random() * wallY)+1);
+    var x = Math.floor((Math.random() * wallX));
+    var y = Math.floor((Math.random() * wallY));
 
     if($('#x' + x + "y" + y).hasClass('worm-block') || $('#x' + x + "y" + y).hasClass('wall-block')){
-      validLoc=false;
+      // validLoc=false;
     }
     else{
       this.exists = true;
@@ -100,7 +100,7 @@ Snake.prototype.addPos = function(x, y){
 Snake.prototype.didCollide = function(wallX, wallY){
   var headX = this.posArray[0].x;
   var headY = this.posArray[0].y;
-  console.log(this.posArray);
+  // console.log(this.posArray);
   for(var i = 1; i < this.posArray.length - 1; i++){
     if(headX == this.posArray[i].x && headY == this.posArray[i].y)
       return true;
@@ -135,10 +135,6 @@ Snake.prototype.moveSnake = function(wallX, wallY, gameApple){
     newY = this.posArray[0].y;
   }
 
-
-
-
-
   if(gameApple.exists == false){
     gameApple.makeApple(wallX, wallY);
   }
@@ -167,17 +163,14 @@ Snake.prototype.moveSnake = function(wallX, wallY, gameApple){
   this.posArray[0].y = newY;
 
   if(this.didCollide(wallX,wallY)){
+    $('#x' + this.posArray[0].x + "y" + this.posArray[0].y).addClass('gameOver-block');
     // alert("You lost!");
     clearInterval(interval);
   }
 
   this.drawSnake();
 }
-//
-// Snake.prototype.updatePos = function(x, y) {
-//   this.head_x = x;
-//   this.head_y = y;
-// };
+
 
 Snake.prototype.drawSnake = function() {
   var x;
@@ -188,9 +181,6 @@ Snake.prototype.drawSnake = function() {
     x = this.posArray[i].x;
     y = this.posArray[i].y;
     $('#x' + x + "y" + y).addClass('worm-block');
-    // if(i==posArray.length){
-    //   $('#x' + x + "y" + y).removeClass('worm-block');
-    // }
   }
 
   var tail = this.posArray.length;
@@ -222,16 +212,20 @@ $(document).ready(function(){
 
     //changes direction of snake!
     if(e.keyCode == 38){ //up
-      gameSnake.direction="up";
+      if(gameSnake.direction!="down")
+        gameSnake.direction="up";
     }
     else if(e.keyCode == 40){ //down
-      gameSnake.direction="down";
+      if(gameSnake.direction!="up")
+        gameSnake.direction="down";
     }
     else if(e.keyCode == 37){ //left
-      gameSnake.direction="left";
+      if(gameSnake.direction!="right")
+        gameSnake.direction="left";
     }
     else if(e.keyCode == 39){ //right
-      gameSnake.direction="right";
+      if(gameSnake.direction!="left")
+        gameSnake.direction="right";
     }
   });
 });
