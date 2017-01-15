@@ -31,7 +31,9 @@ Grid.prototype.drawGrid = function(x, y){
   }
 };
   /*==========================Apple Object===========================*/
-var Apple = function() {
+var Apple = function(x, y) {
+  this.wallX = x;
+  this.wallY = y;
   this.x = 0;
   this.y = 0;
   this.exists = false;
@@ -41,8 +43,36 @@ Apple.prototype.createApple = function(){
   //assign an x,y to apple, while that x,y overlaps with a snake or wall, then generate it again
   //when an apple is generated, changes this.exists to true
 
+}
+Apple.prototype.makeApple = function(wallX, wallY){
+
+  var validLoc = false;
+
+  while(validLoc == false){
+    var x = Math.floor((Math.random() * wallX)+1);
+    var y = Math.floor((Math.random() * wallY)+1);
+
+    if($('#x' + x + "y" + y).hasClass('worm-block') || $('#x' + x + "y" + y).hasClass('wall-block')){
+      validLoc=false;
+    }
+    else{
+      this.exists = true;
+      $('#x' + x + "y" + y).addClass('apple-block')
+      this.x = x;
+      this.y = y;
+      validLoc=true;
+    }
+  }
 
 }
+
+Apple.prototype.destroyApple = function(){
+
+  this.exists = false;
+  $('#x' + this.x + "y" + this.y).removeClass('apple-block');
+
+}
+
 
   /*==========================Snake Object===========================*/
 var Snake = function() {
@@ -51,9 +81,22 @@ var Snake = function() {
   // var posArray = [new Pos(3,3)];
   this.posArray = [new Pos(3,3)];
   this.direction = "right";
+  this.growCount = 0;
   // this.posArray[0] = new Pos(3,3);
   //var posArray;
 };
+
+Snake.prototype.ateApple = function(gameApple){
+
+  if(this.posArray[0].x == gameApple.x && this.posArray[0].y == gameApple.y){
+    return true;
+  }
+  return false;
+}
+
+Snake.prototype.grow = function(){
+  // growCount
+}
 
 Snake.prototype.addPos = function(x, y){
   this.posArray.push(new Pos(x,y));
@@ -75,9 +118,13 @@ Snake.prototype.didCollide = function(wallX, wallY){
 
 //give moveSnake an "apple count" which, when a snake eats an apple, appleCount will become 3. Each time moveSnake is called, appleCount reduces by 1
 //When appleCount > 0, the current move the snake makes will be added on to the total length of the snake
-Snake.prototype.moveSnake = function(wallX, wallY){
+Snake.prototype.moveSnake = function(wallX, wallY, gameApple){
   var newX;
   var newY;
+
+  if(gameApple.exists == false){
+    gameApple.makeApple(wallX, wallY);
+  }
 
   if(this.direction==="up"){
     newX = this.posArray[0].x;
@@ -96,6 +143,13 @@ Snake.prototype.moveSnake = function(wallX, wallY){
     newY = this.posArray[0].y;
   }
 
+  // console.log("X" + gameApple.x + "Y" + gameApple.y);
+  if(this.ateApple(gameApple)){
+    gameApple.destroyApple();
+    this.grow();
+  }
+
+
   var tail = this.posArray.length;
   var tailX = this.posArray[tail-1].x;
   var tailY = this.posArray[tail-1].y;
@@ -105,11 +159,11 @@ Snake.prototype.moveSnake = function(wallX, wallY){
   this.posArray[0].x = newX;
   this.posArray[0].y = newY;
 
-  console.log(this.posArray);
+  // console.log(this.posArray);
 
   //game over logic
   if(this.didCollide(wallX,wallY)){
-    alert("You lost!");
+    // alert("You lost!");
     clearInterval(interval);
   }
 
@@ -123,10 +177,9 @@ Snake.prototype.updatePos = function(x, y) {
 };
 
 Snake.prototype.drawSnake = function() {
-//  console.log(this.head_x + ", " + this.head_y);
   var x;
   var y;
-  console.log(this.posArray);
+  // console.log(this.posArray);
 
   for(var i = 0; i < this.posArray.length; i++){
     x = this.posArray[i].x;
@@ -147,12 +200,13 @@ $(document).ready(function(){
 
   var grid = new Grid(x, y, s);
   var gameSnake = new Snake();
+  var gameApple = new Apple(x, y);
 
   grid.drawGrid(x, y);
   gameSnake.drawSnake();
   /*==========================Game Logic===========================*/
 
-  interval = setInterval(function(){gameSnake.moveSnake(x, y)}, 65);
+  interval = setInterval(function(){gameSnake.moveSnake(x, y, gameApple)}, 65);
   //alert("Continuing...");
 
   /*==========================Handlers===========================*/
@@ -161,19 +215,15 @@ $(document).ready(function(){
     //changes direction of snake!
     if(e.keyCode == 38){ //up
       gameSnake.direction="up";
-      console.log(gameSnake.direction);
     }
     else if(e.keyCode == 40){ //down
       gameSnake.direction="down";
-      console.log(gameSnake.direction);
     }
     else if(e.keyCode == 37){ //left
       gameSnake.direction="left";
-      console.log(gameSnake.direction);
     }
     else if(e.keyCode == 39){ //right
       gameSnake.direction="right";
-      console.log(gameSnake.direction);
     }
   });
 });
