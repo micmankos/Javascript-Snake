@@ -39,11 +39,6 @@ var Apple = function(x, y) {
   this.exists = false;
 }
 
-Apple.prototype.createApple = function(){
-  //assign an x,y to apple, while that x,y overlaps with a snake or wall, then generate it again
-  //when an apple is generated, changes this.exists to true
-
-}
 Apple.prototype.makeApple = function(wallX, wallY){
 
   var validLoc = false;
@@ -76,10 +71,10 @@ Apple.prototype.destroyApple = function(){
 
   /*==========================Snake Object===========================*/
 var Snake = function() {
-  this.head_x = 0;
-  this.head_y = 0;
+  // this.head_x = 0;
+  // this.head_y = 0;
   // var posArray = [new Pos(3,3)];
-  this.posArray = [new Pos(3,3)];
+  this.posArray = [new Pos(4,4), new Pos(4,3), new Pos(4,2), new Pos(4,1)];
   this.direction = "right";
   this.growCount = 0;
   // this.posArray[0] = new Pos(3,3);
@@ -95,7 +90,7 @@ Snake.prototype.ateApple = function(gameApple){
 }
 
 Snake.prototype.grow = function(){
-  // growCount
+  this.growCount += 3;
 }
 
 Snake.prototype.addPos = function(x, y){
@@ -105,8 +100,9 @@ Snake.prototype.addPos = function(x, y){
 Snake.prototype.didCollide = function(wallX, wallY){
   var headX = this.posArray[0].x;
   var headY = this.posArray[0].y;
+  console.log(this.posArray);
   for(var i = 1; i < this.posArray.length - 1; i++){
-    if(headX == posArray[i].x && headY == posArray[i].y)
+    if(headX == this.posArray[i].x && headY == this.posArray[i].y)
       return true;
   }
 
@@ -121,10 +117,6 @@ Snake.prototype.didCollide = function(wallX, wallY){
 Snake.prototype.moveSnake = function(wallX, wallY, gameApple){
   var newX;
   var newY;
-
-  if(gameApple.exists == false){
-    gameApple.makeApple(wallX, wallY);
-  }
 
   if(this.direction==="up"){
     newX = this.posArray[0].x;
@@ -143,38 +135,49 @@ Snake.prototype.moveSnake = function(wallX, wallY, gameApple){
     newY = this.posArray[0].y;
   }
 
+
+
+
+
+  if(gameApple.exists == false){
+    gameApple.makeApple(wallX, wallY);
+  }
   // console.log("X" + gameApple.x + "Y" + gameApple.y);
   if(this.ateApple(gameApple)){
+    gameApple.exists = false;
     gameApple.destroyApple();
     this.grow();
   }
 
-
-  var tail = this.posArray.length;
-  var tailX = this.posArray[tail-1].x;
-  var tailY = this.posArray[tail-1].y;
-  $('#x' + tailX + "y" + tailY).removeClass('worm-block');
   // $('#x' + tailX + "y" + tailY).addClass('wall-block');
+  for(var h = this.posArray.length-1; h > 0; h--){
+    this.posArray[h].x = this.posArray[h-1].x;
+    this.posArray[h].y = this.posArray[h-1].y;
+  }
+
+  if(this.growCount > 0){
+    this.posArray.unshift(new Pos(newX, newY))
+    this.growCount--;
+  }
+  else{//growCount == 0
+
+  }
 
   this.posArray[0].x = newX;
   this.posArray[0].y = newY;
 
-  // console.log(this.posArray);
-
-  //game over logic
   if(this.didCollide(wallX,wallY)){
     // alert("You lost!");
     clearInterval(interval);
   }
 
   this.drawSnake();
-
 }
-
-Snake.prototype.updatePos = function(x, y) {
-  this.head_x = x;
-  this.head_y = y;
-};
+//
+// Snake.prototype.updatePos = function(x, y) {
+//   this.head_x = x;
+//   this.head_y = y;
+// };
 
 Snake.prototype.drawSnake = function() {
   var x;
@@ -189,6 +192,11 @@ Snake.prototype.drawSnake = function() {
     //   $('#x' + x + "y" + y).removeClass('worm-block');
     // }
   }
+
+  var tail = this.posArray.length;
+  var tailX = this.posArray[tail-1].x;
+  var tailY = this.posArray[tail-1].y;
+  $('#x' + tailX + "y" + tailY).removeClass('worm-block');
 };
 
 $(document).ready(function(){
