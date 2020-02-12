@@ -1,3 +1,7 @@
 # Javascript-Snake
 
-The class game Snake recreated in Javascript. To play, either download the source files here or go to www.micmankos.com.
+The classic Snake game recreated for the Desktop web browser.
+
+I coded this as a weekend project to learn javascript while in university. 
+
+Play at http://www.micmankos.com/snake/snake.html. You may have to zoom in or out to fit the game on screen. Only compatible with desktop. 
